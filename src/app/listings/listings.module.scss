@@ -1,0 +1,284 @@
+.container {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.header {
+  background: white;
+  border-bottom: 1px solid #e1e1e1;
+  padding: 0 20px;
+  
+  .headerContent {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+      text-decoration: none;
+    }
+    
+    .dashboardLink {
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background 0.2s;
+      
+      &:hover {
+        background: #5a67d8;
+      }
+    }
+  }
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 40px;
+  
+  h1 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  p {
+    color: #666;
+    font-size: 16px;
+  }
+}
+
+.filters {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  
+  .searchBox {
+    flex: 1;
+    min-width: 250px;
+    
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e1e1e1;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.2s;
+      
+      &:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+    }
+  }
+  
+  .typeFilter {
+    select {
+      padding: 12px 16px;
+      border: 2px solid #e1e1e1;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
+      cursor: pointer;
+      
+      &:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+    }
+  }
+}
+
+.results {
+  .resultsCount {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  
+  .listingsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    
+    .listingCard {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s;
+      
+      &:hover {
+        transform: translateY(-4px);
+      }
+      
+      .cardImage {
+        height: 200px;
+        overflow: hidden;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .placeholderImage {
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 600;
+          font-size: 18px;
+        }
+      }
+      
+      .cardContent {
+        padding: 20px;
+        
+        h3 {
+          color: #333;
+          margin-bottom: 8px;
+          font-size: 18px;
+        }
+        
+        .type {
+          color: #667eea;
+          font-size: 14px;
+          font-weight: 500;
+          margin-bottom: 12px;
+        }
+        
+        .description {
+          color: #666;
+          font-size: 14px;
+          line-height: 1.5;
+          margin-bottom: 16px;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        
+        .cardMeta {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+          font-size: 12px;
+          color: #999;
+          
+          .owner {
+            font-weight: 500;
+          }
+          
+          .location {
+            font-size: 12px;
+          }
+        }
+        
+        .cardFooter {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          
+          .price {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+          }
+          
+          .viewButton {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+            
+            &:hover {
+              background: #5a67d8;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .emptyState {
+    text-align: center;
+    padding: 60px 20px;
+    
+    p {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .backButton {
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      display: inline-block;
+      transition: background 0.2s;
+      
+      &:hover {
+        background: #5a67d8;
+      }
+    }
+  }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  font-size: 18px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 20px;
+  }
+  
+  .filters {
+    flex-direction: column;
+    
+    .searchBox {
+      min-width: auto;
+    }
+  }
+  
+  .results {
+    .listingsGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

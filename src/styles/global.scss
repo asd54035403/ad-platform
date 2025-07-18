@@ -1,0 +1,140 @@
+@use './variables' as vars;
+
+// Global styles for the application
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: vars.$text-color;
+  background: vars.$background-color;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+p {
+  line-height: 1.6;
+}
+
+.container {
+  max-width: vars.$max-width;
+  margin: 0 auto;
+  padding: 0 vars.$spacing-lg;
+}
+
+// Utility classes
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-sm {
+  gap: vars.$spacing-sm;
+}
+
+.gap-md {
+  gap: vars.$spacing-md;
+}
+
+.gap-lg {
+  gap: vars.$spacing-lg;
+}
+
+.mb-sm {
+  margin-bottom: vars.$spacing-sm;
+}
+
+.mb-md {
+  margin-bottom: vars.$spacing-md;
+}
+
+.mb-lg {
+  margin-bottom: vars.$spacing-lg;
+}
+
+.mt-sm {
+  margin-top: vars.$spacing-sm;
+}
+
+.mt-md {
+  margin-top: vars.$spacing-md;
+}
+
+.mt-lg {
+  margin-top: vars.$spacing-lg;
+}
+
+.p-sm {
+  padding: vars.$spacing-sm;
+}
+
+.p-md {
+  padding: vars.$spacing-md;
+}
+
+.p-lg {
+  padding: vars.$spacing-lg;
+}
+
+@media (max-width: vars.$breakpoint-md) {
+  .container {
+    padding: 0 vars.$spacing-md;
+  }
+}

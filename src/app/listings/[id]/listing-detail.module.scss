@@ -1,0 +1,448 @@
+@use 'sass:color';
+@use '../../../styles/variables' as vars;
+
+.container {
+  min-height: 100vh;
+  background-color: vars.$background-color;
+}
+
+.header {
+  background: white;
+  border-bottom: 1px solid vars.$border-color;
+  padding: 1rem 0;
+  
+  .headerContent {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: vars.$primary-color;
+    text-decoration: none;
+    
+    &:hover {
+      color: vars.$primary-color-dark;
+    }
+  }
+  
+  .nav {
+    display: flex;
+    gap: 1rem;
+    
+    .navLink {
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      color: vars.$text-color;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+      
+      &:hover {
+        background-color: vars.$background-color;
+      }
+    }
+  }
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  
+  a {
+    color: vars.$primary-color;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  span {
+    color: vars.$text-color-light;
+  }
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  
+  .imageSection {
+    .mainImage {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .placeholderImage {
+      width: 100%;
+      height: 400px;
+      background: vars.$background-color;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: vars.$text-color-light;
+      font-size: 1.5rem;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .infoSection {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      
+      h1 {
+        font-size: 2rem;
+        color: vars.$text-color;
+        margin: 0;
+        flex: 1;
+      }
+      
+      .typeTag {
+        background: vars.$primary-color;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-left: 1rem;
+      }
+    }
+    
+    .price {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: color.adjust(vars.$primary-color, $lightness: 45%);
+      border-radius: 6px;
+      
+      .priceLabel {
+        color: vars.$text-color-light;
+        font-size: 0.9rem;
+      }
+      
+      .priceValue {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: vars.$primary-color;
+      }
+    }
+    
+    .owner {
+      margin-bottom: 1.5rem;
+      
+      h3 {
+        margin-bottom: 0.5rem;
+        color: vars.$text-color;
+      }
+      
+      p {
+        margin: 0.25rem 0;
+        color: vars.$text-color-light;
+      }
+    }
+    
+    .location {
+      margin-bottom: 1.5rem;
+      
+      h3 {
+        margin-bottom: 0.5rem;
+        color: vars.$text-color;
+      }
+      
+      p {
+        margin: 0;
+        color: vars.$text-color-light;
+      }
+    }
+    
+    .platformUrl {
+      margin-bottom: 1.5rem;
+      
+      h3 {
+        margin-bottom: 0.5rem;
+        color: vars.$text-color;
+      }
+      
+      a {
+        color: vars.$primary-color;
+        text-decoration: none;
+        word-break: break-all;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    
+    .categories,
+    .tags {
+      margin-bottom: 1.5rem;
+      
+      h3 {
+        margin-bottom: 0.5rem;
+        color: vars.$text-color;
+      }
+      
+      .tagList {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        
+        .categoryTag {
+          background: vars.$primary-color;
+          color: white;
+          padding: 0.25rem 0.75rem;
+          border-radius: 12px;
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+        
+        .tag {
+          background: vars.$background-color;
+          color: vars.$text-color;
+          padding: 0.25rem 0.75rem;
+          border-radius: 12px;
+          font-size: 0.8rem;
+          border: 1px solid vars.$border-color;
+        }
+      }
+    }
+    
+    .description {
+      margin-bottom: 2rem;
+      
+      h3 {
+        margin-bottom: 1rem;
+        color: vars.$text-color;
+      }
+      
+      p {
+        line-height: 1.6;
+        color: vars.$text-color-light;
+        margin: 0;
+      }
+    }
+    
+    .actions {
+      display: flex;
+      gap: 1rem;
+      
+      .contactButton,
+      .loginButton {
+        flex: 1;
+        padding: 1rem 2rem;
+        background: vars.$primary-color;
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.2s;
+        
+        &:hover {
+          background-color: vars.$primary-color-dark;
+        }
+      }
+    }
+  }
+}
+
+.messageModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  
+  .modalContent {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    
+    h3 {
+      margin-bottom: 1rem;
+      color: vars.$text-color;
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid vars.$border-color;
+      border-radius: 4px;
+      font-size: 1rem;
+      resize: vertical;
+      min-height: 120px;
+      margin-bottom: 1rem;
+      
+      &:focus {
+        outline: none;
+        border-color: vars.$primary-color;
+      }
+    }
+    
+    .modalActions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      
+      .cancelButton {
+        padding: 0.75rem 1.5rem;
+        background: vars.$background-color;
+        color: vars.$text-color;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        
+        &:hover {
+          background-color: color.adjust(vars.$background-color, $lightness: -10%);
+        }
+      }
+      
+      .sendButton {
+        padding: 0.75rem 1.5rem;
+        background: vars.$primary-color;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        
+        &:hover:not(:disabled) {
+          background-color: vars.$primary-color-dark;
+        }
+        
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+.loading,
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.2rem;
+  color: vars.$text-color-light;
+}
+
+.error {
+  color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding: 1rem;
+  }
+  
+  .content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    
+    .imageSection {
+      .mainImage,
+      .placeholderImage {
+        height: 250px;
+      }
+    }
+    
+    .infoSection {
+      padding: 1.5rem;
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        
+        h1 {
+          font-size: 1.5rem;
+        }
+        
+        .typeTag {
+          margin-left: 0;
+        }
+      }
+      
+      .price {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        
+        .priceValue {
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+  
+  .messageModal .modalContent {
+    padding: 1.5rem;
+    
+    .modalActions {
+      flex-direction: column;
+      
+      .cancelButton,
+      .sendButton {
+        width: 100%;
+      }
+    }
+  }
+  
+  .header .nav {
+    flex-direction: column;
+    gap: 0.5rem;
+    
+    .navLink {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.9rem;
+    }
+  }
+}

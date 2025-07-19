@@ -1,23 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '../../../../lib/db';
+import { executeDelete, executeInsert } from '../../../../lib/db-adapter';
 import { hashPassword } from '../../../../lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const db = await getDb();
-    
     // 清空現有資料
-    await db.run('DELETE FROM Messages');
-    await db.run('DELETE FROM Listings');
-    await db.run('DELETE FROM AdPosts');
-    await db.run('DELETE FROM Users');
+    await executeDelete('DELETE FROM Messages', []);
+    await executeDelete('DELETE FROM Listings', []);
+    await executeDelete('DELETE FROM AdPosts', []);
+    await executeDelete('DELETE FROM Users', []);
     
     // 創建測試帳號
     const advertiserPassword = await hashPassword('advertiser123');
     const publisherPassword = await hashPassword('publisher123');
     
     // 廣告主帳號
-    const advertiserResult = await db.run(
+    const advertiserResult = await executeInsert(
       'INSERT INTO Users (email, password, name, role, bio) VALUES (?, ?, ?, ?, ?)',
       [
         'advertiser@test.com',
@@ -29,7 +27,7 @@ export async function POST(request: NextRequest) {
     );
     
     // 媒體主帳號
-    const publisherResult = await db.run(
+    const publisherResult = await executeInsert(
       'INSERT INTO Users (email, password, name, role, bio) VALUES (?, ?, ?, ?, ?)',
       [
         'publisher@test.com',
@@ -136,7 +134,7 @@ export async function POST(request: NextRequest) {
     
     // 插入廣告位資料
     for (const listing of listings) {
-      await db.run(
+      await executeInsert(
         `INSERT INTO Listings (owner_id, title, type, description, platform_url, price, categories, tags, location, image_url) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
@@ -183,7 +181,7 @@ export async function POST(request: NextRequest) {
 
     // 插入廣告需求資料
     for (const adPost of adPosts) {
-      await db.run(
+      await executeInsert(
         `INSERT INTO AdPosts (advertiser_id, title, budget, target_type, content, attachments) 
          VALUES (?, ?, ?, ?, ?, ?)`,
         [
@@ -221,7 +219,7 @@ export async function POST(request: NextRequest) {
 
     // 插入訊息資料
     for (const message of messages) {
-      await db.run(
+      await executeInsert(
         `INSERT INTO Messages (listing_id, from_user_id, to_user_id, content) 
          VALUES (?, ?, ?, ?)`,
         [

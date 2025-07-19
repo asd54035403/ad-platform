@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '../../../../../lib/db';
+import { executeGet, executeUpdate } from '../../../../../lib/db-adapter';
 import { getUserFromToken } from '../../../../../lib/auth';
+import type { DbParam } from '../../../../../lib/types';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const db = await getDb();
-    const listing = await db.get(`
+    const listing = await executeGet(`
       SELECT l.*, u.name as owner_name, u.email as owner_email, u.bio as owner_bio
       FROM Listings l 
       JOIN Users u ON l.owner_id = u.id 
@@ -51,10 +51,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       );
     }
 
-    const db = await getDb();
-    
     // Check if listing exists and belongs to user
-    const existingListing = await db.get(
+    const existingListing = await executeGet(
       'SELECT * FROM Listings WHERE id = ? AND owner_id = ?',
       [params.id, user.id]
     );
@@ -69,13 +67,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const updates = await request.json();
     const allowedFields = ['title', 'type', 'description', 'platform_url', 'price', 'categories', 'tags', 'location', 'image_url', 'is_active'];
     
-    const updateFields = [];
-    const updateValues = [];
+    const updateFields: string[] = [];
+    const updateValues: DbParam[] = [];
     
     for (const [key, value] of Object.entries(updates)) {
       if (allowedFields.includes(key)) {
         updateFields.push(`${key} = ?`);
-        updateValues.push(value);
+        updateValues.push(value as DbParam);
       }
     }
 
@@ -88,7 +86,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     updateValues.push(params.id);
 
-    await db.run(
+    await executeUpdate(
       `UPDATE Listings SET ${updateFields.join(', ')} WHERE id = ?`,
       updateValues
     );
@@ -125,10 +123,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       );
     }
 
-    const db = await getDb();
-    
     // Check if listing exists and belongs to user
-    const existingListing = await db.get(
+    const existingListing = await executeGet(
       'SELECT * FROM Listings WHERE id = ? AND owner_id = ?',
       [params.id, user.id]
     );
@@ -141,7 +137,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     }
 
     // Soft delete by setting is_active to 0
-    await db.run(
+    await executeUpdate(
       'UPDATE Listings SET is_active = 0 WHERE id = ?',
       [params.id]
     );

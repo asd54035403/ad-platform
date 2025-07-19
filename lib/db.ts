@@ -1,5 +1,5 @@
 import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
+import { open, Database } from 'sqlite';
 import { Pool } from 'pg';
 import path from 'path';
 
@@ -8,7 +8,7 @@ let pool: Pool | null = null;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-export async function getDb() {
+export async function getDb(): Promise<Pool | Database> {
   if (isProduction) {
     // Use PostgreSQL for production
     if (!pool) {
@@ -36,7 +36,7 @@ export async function initializeDatabase() {
   
   if (isProduction) {
     // PostgreSQL syntax for production
-    await db.query(`
+    await (db as Pool).query(`
       CREATE TABLE IF NOT EXISTS Users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
@@ -49,7 +49,7 @@ export async function initializeDatabase() {
       )
     `);
 
-    await db.query(`
+    await (db as Pool).query(`
       CREATE TABLE IF NOT EXISTS Listings (
         id SERIAL PRIMARY KEY,
         owner_id INTEGER REFERENCES Users(id),
@@ -67,7 +67,7 @@ export async function initializeDatabase() {
       )
     `);
 
-    await db.query(`
+    await (db as Pool).query(`
       CREATE TABLE IF NOT EXISTS Messages (
         id SERIAL PRIMARY KEY,
         listing_id INTEGER REFERENCES Listings(id),
@@ -79,7 +79,7 @@ export async function initializeDatabase() {
       )
     `);
 
-    await db.query(`
+    await (db as Pool).query(`
       CREATE TABLE IF NOT EXISTS AdPosts (
         id SERIAL PRIMARY KEY,
         advertiser_id INTEGER REFERENCES Users(id),
@@ -93,7 +93,7 @@ export async function initializeDatabase() {
     `);
   } else {
     // SQLite syntax for development
-    await db.exec(`
+    await (db as Database).exec(`
       CREATE TABLE IF NOT EXISTS Users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE NOT NULL,
@@ -106,7 +106,7 @@ export async function initializeDatabase() {
       )
     `);
 
-    await db.exec(`
+    await (db as Database).exec(`
       CREATE TABLE IF NOT EXISTS Listings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         owner_id INTEGER REFERENCES Users(id),
@@ -124,7 +124,7 @@ export async function initializeDatabase() {
       )
     `);
 
-    await db.exec(`
+    await (db as Database).exec(`
       CREATE TABLE IF NOT EXISTS Messages (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         listing_id INTEGER REFERENCES Listings(id),
@@ -136,7 +136,7 @@ export async function initializeDatabase() {
       )
     `);
 
-    await db.exec(`
+    await (db as Database).exec(`
       CREATE TABLE IF NOT EXISTS AdPosts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         advertiser_id INTEGER REFERENCES Users(id),

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '../../../../lib/db';
+import { executeGet } from '../../../../lib/db-adapter';
 import { getUserFromToken } from '../../../../lib/auth';
 
 export async function GET(request: NextRequest) {
@@ -20,22 +20,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const db = await getDb();
     let stats = {};
 
     if (user.role === 'advertiser') {
       // Get advertiser statistics
-      const activeAds = await db.get(
+      const activeAds = await executeGet(
         'SELECT COUNT(*) as count FROM AdPosts WHERE advertiser_id = ?',
         [user.id]
       );
 
-      const unreadMessages = await db.get(
+      const unreadMessages = await executeGet(
         'SELECT COUNT(*) as count FROM Messages WHERE to_user_id = ? AND is_read = 0',
         [user.id]
       );
 
-      const monthlyMessages = await db.get(
+      const monthlyMessages = await executeGet(
         `SELECT COUNT(*) as count FROM Messages 
          WHERE (from_user_id = ? OR to_user_id = ?) 
          AND created_at >= datetime('now', '-30 days')`,
@@ -50,17 +49,17 @@ export async function GET(request: NextRequest) {
 
     } else if (user.role === 'publisher') {
       // Get publisher statistics
-      const activeListings = await db.get(
+      const activeListings = await executeGet(
         'SELECT COUNT(*) as count FROM Listings WHERE owner_id = ? AND is_active = 1',
         [user.id]
       );
 
-      const unreadMessages = await db.get(
+      const unreadMessages = await executeGet(
         'SELECT COUNT(*) as count FROM Messages WHERE to_user_id = ? AND is_read = 0',
         [user.id]
       );
 
-      const monthlyMessages = await db.get(
+      const monthlyMessages = await executeGet(
         `SELECT COUNT(*) as count FROM Messages 
          WHERE (from_user_id = ? OR to_user_id = ?) 
          AND created_at >= datetime('now', '-30 days')`,

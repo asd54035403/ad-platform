@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '../../../../lib/db';
+import { executeAll, executeInsert } from '../../../../lib/db-adapter';
 import { getUserFromToken } from '../../../../lib/auth';
+import type { DbParam } from '../../../../lib/types';
 
 export async function GET(request: NextRequest) {
   try {
-    const db = await getDb();
     const { searchParams } = new URL(request.url);
     const advertiser_id = searchParams.get('advertiser_id');
     const target_type = searchParams.get('target_type');
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       JOIN Users u ON a.advertiser_id = u.id
       WHERE 1=1
     `;
-    const params: (string | number)[] = [];
+    const params: DbParam[] = [];
 
     if (advertiser_id) {
       query += ' AND a.advertiser_id = ?';
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     query += ' ORDER BY a.created_at DESC';
 
-    const ads = await db.all(query, params);
+    const ads = await executeAll(query, params);
 
     return NextResponse.json({
       success: true,
@@ -78,8 +78,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const db = await getDb();
-    const result = await db.run(
+    const result = await executeInsert(
       `INSERT INTO AdPosts (advertiser_id, title, budget, target_type, content, attachments) 
        VALUES (?, ?, ?, ?, ?, ?)`,
       [user.id, title, budget, target_type, content, attachments || '']

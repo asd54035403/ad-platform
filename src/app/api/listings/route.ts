@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '../../../../lib/db';
+import { executeAll, executeInsert } from '../../../../lib/db-adapter';
 import { getUserFromToken } from '../../../../lib/auth';
+import type { DbParam } from '../../../../lib/types';
 
 export async function GET(request: NextRequest) {
   try {
-    const db = await getDb();
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
     const category = searchParams.get('category');
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       FROM Listings l 
       JOIN Users u ON l.owner_id = u.id 
     `;
-    const params: (string | number)[] = [];
+    const params: DbParam[] = [];
 
     // Handle owner=me parameter for authenticated users
     if (owner === 'me') {
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 
     query += ' ORDER BY l.created_at DESC';
 
-    const listings = await db.all(query, params);
+    const listings = await executeAll(query, params);
 
     return NextResponse.json({
       success: true,
@@ -102,8 +102,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const db = await getDb();
-    const result = await db.run(
+    const result = await executeInsert(
       `INSERT INTO Listings (owner_id, title, type, description, platform_url, price, categories, tags, location, image_url) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [user.id, title, type, description, platform_url, price, categories, tags, location, image_url]

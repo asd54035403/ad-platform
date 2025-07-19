@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '../../../../lib/db';
+import { executeAll, executeInsert } from '../../../../lib/db-adapter';
 import { getUserFromToken } from '../../../../lib/auth';
+import type { DbParam } from '../../../../lib/types';
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,7 +21,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const db = await getDb();
     const { searchParams } = new URL(request.url);
     const listing_id = searchParams.get('listing_id');
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       LEFT JOIN Listings l ON m.listing_id = l.id
       WHERE (m.from_user_id = ? OR m.to_user_id = ?)
     `;
-    const params = [user.id, user.id];
+    const params: DbParam[] = [user.id, user.id];
 
     if (listing_id) {
       query += ' AND m.listing_id = ?';
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     query += ' ORDER BY m.created_at DESC';
 
-    const messages = await db.all(query, params);
+    const messages = await executeAll(query, params);
 
     return NextResponse.json({
       success: true,
@@ -94,8 +94,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const db = await getDb();
-    const result = await db.run(
+    const result = await executeInsert(
       `INSERT INTO Messages (listing_id, from_user_id, to_user_id, content) 
        VALUES (?, ?, ?, ?)`,
       [listing_id, user.id, to_user_id, content]

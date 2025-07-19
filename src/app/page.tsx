@@ -1,7 +1,48 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 
 export default function Home() {
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        const response = await fetch('/api/init', {
+          method: 'POST',
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to initialize database');
+        }
+        
+        setIsInitialized(true);
+      } catch (err) {
+        console.error('App initialization error:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        setIsInitialized(true); // Allow app to continue even if init fails
+      }
+    };
+
+    initializeApp();
+  }, []);
+
+  if (!isInitialized) {
+    return (
+      <div className={styles.page}>
+        <main className={styles.main}>
+          <div className={styles.hero}>
+            <h1 className={styles.title}>AdMatch</h1>
+            <p className={styles.subtitle}>正在初始化...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>

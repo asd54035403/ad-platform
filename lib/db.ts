@@ -14,16 +14,29 @@ export async function getDb(): Promise<Pool | Database> {
     if (!pool) {
       const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
       if (!connectionString) {
-        throw new Error('Database connection string not found');
+        console.error('Database connection error: No connection string found');
+        console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('DATABASE') || key.includes('POSTGRES')));
+        throw new Error('Database connection string not found. Please set POSTGRES_URL or DATABASE_URL environment variable.');
       }
+      console.log('Connecting to PostgreSQL database...');
       pool = new Pool({
         connectionString,
         ssl: { rejectUnauthorized: false },
       });
+      
+      // Test the connection
+      try {
+        await pool.query('SELECT NOW()');
+        console.log('Database connection successful');
+      } catch (error) {
+        console.error('Database connection test failed:', error);
+        throw error;
+      }
     }
     return pool;
   } else {
     // Use SQLite for development
+    console.log('Using SQLite database for development');
     return await open({
       filename: dbPath,
       driver: sqlite3.Database,
@@ -32,6 +45,10 @@ export async function getDb(): Promise<Pool | Database> {
 }
 
 export async function initializeDatabase() {
+  console.log('Starting database initialization...');
+  console.log('Environment:', process.env.NODE_ENV);
+  console.log('Is production:', isProduction);
+  
   const db = await getDb();
   
   if (isProduction) {
@@ -150,6 +167,7 @@ export async function initializeDatabase() {
     `);
   }
 
-  console.log('Database initialized successfully');
+  console.log('Database tables created successfully');
+  console.log('Database initialization completed');
   return db;
 }

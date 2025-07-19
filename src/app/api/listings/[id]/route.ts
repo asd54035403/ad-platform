@@ -3,14 +3,15 @@ import { executeGet, executeUpdate } from '../../../../../lib/db-adapter';
 import { getUserFromToken } from '../../../../../lib/auth';
 import type { DbParam } from '../../../../../lib/types';
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const listing = await executeGet(`
       SELECT l.*, u.name as owner_name, u.email as owner_email, u.bio as owner_bio
       FROM Listings l 
       JOIN Users u ON l.owner_id = u.id 
       WHERE l.id = ? AND l.is_active = 1
-    `, [params.id]);
+    `, [id]);
 
     if (!listing) {
       return NextResponse.json(
@@ -33,8 +34,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const token = request.headers.get('Authorization')?.replace('Bearer ', '');
     if (!token) {
       return NextResponse.json(
@@ -54,7 +56,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     // Check if listing exists and belongs to user
     const existingListing = await executeGet(
       'SELECT * FROM Listings WHERE id = ? AND owner_id = ?',
-      [params.id, user.id]
+      [id, user.id]
     );
 
     if (!existingListing) {
@@ -84,7 +86,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       );
     }
 
-    updateValues.push(params.id);
+    updateValues.push(id);
 
     await executeUpdate(
       `UPDATE Listings SET ${updateFields.join(', ')} WHERE id = ?`,
@@ -105,8 +107,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const token = request.headers.get('Authorization')?.replace('Bearer ', '');
     if (!token) {
       return NextResponse.json(
@@ -126,7 +129,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     // Check if listing exists and belongs to user
     const existingListing = await executeGet(
       'SELECT * FROM Listings WHERE id = ? AND owner_id = ?',
-      [params.id, user.id]
+      [id, user.id]
     );
 
     if (!existingListing) {
@@ -139,7 +142,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     // Soft delete by setting is_active to 0
     await executeUpdate(
       'UPDATE Listings SET is_active = 0 WHERE id = ?',
-      [params.id]
+      [id]
     );
 
     return NextResponse.json({

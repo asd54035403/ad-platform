@@ -1,18 +1,15 @@
-import Link from "next/link";
-import styles from "./page.module.css";
-import { initializeDatabase } from "../../lib/db";
+"use client";
 
-export default async function Home() {
-  // Initialize database on server side if in production
-  if (process.env.NODE_ENV === 'production') {
-    try {
-      await initializeDatabase();
-      console.log('Database initialized on server side');
-    } catch (error) {
-      console.error('Server-side database initialization failed:', error);
-      // Continue rendering even if database init fails
-    }
-  }
+import Link from "next/link";
+import { useEffect } from "react";
+import styles from "./page.module.css";
+import { initializeMockData } from "../lib/localStorage";
+
+export default function Home() {
+  useEffect(() => {
+    // Initialize mock data when component mounts
+    initializeMockData();
+  }, []);
 
   return (
     <div className={styles.page}>

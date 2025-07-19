@@ -1,19 +1,19 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 確保 sqlite3 不會在服務器組件中引起問題
-  serverExternalPackages: ['sqlite3'],
+  // 靜態導出配置 - 純前端應用
+  output: 'export',
   
-  // 確保正確的輸出配置
-  output: 'standalone',
+  // 禁用圖片優化 (靜態導出不支持)
+  images: {
+    unoptimized: true
+  },
   
   // 解決潛在的路由問題
   trailingSlash: false,
   
-  // 確保API routes正確處理
-  experimental: {
-    serverComponentsExternalPackages: ['sqlite3']
-  }
+  // 基礎路徑配置 (如果需要部署到子路徑)
+  // basePath: '/ad-platform',
 };
 
 export default nextConfig;

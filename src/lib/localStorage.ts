@@ -21,7 +21,7 @@ const getItem = (key: string) => {
   }
 };
 
-const setItem = (key: string, value: any) => {
+const setItem = (key: string, value: unknown) => {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(key, JSON.stringify(value));

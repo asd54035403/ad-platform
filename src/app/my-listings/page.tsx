@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './my-listings.module.scss';
 
 interface User {
@@ -27,7 +28,6 @@ interface Listing {
 
 export default function MyListings() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +46,6 @@ export default function MyListings() {
       return;
     }
     
-    setUser(parsedUser);
     fetchMyListings();
   }, [router]);
 
@@ -176,7 +175,13 @@ export default function MyListings() {
                 <div key={listing.id} className={`${styles.listingCard} ${!listing.is_active ? styles.inactive : ''}`}>
                   <div className={styles.cardImage}>
                     {listing.image_url ? (
-                      <img src={listing.image_url} alt={listing.title} />
+                      <Image 
+                        src={listing.image_url} 
+                        alt={listing.title}
+                        width={400}
+                        height={200}
+                        className={styles.listingImage}
+                      />
                     ) : (
                       <div className={styles.placeholderImage}>
                         <span>{listing.type}</span>

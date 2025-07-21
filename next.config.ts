@@ -1,10 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 靜態導出配置 - 純前端應用
-  output: 'export',
+  // 開發環境使用標準模式，支援完整的Next.js功能
+  // output: 'export', // 暫時關閉靜態導出以支援路由
   
-  // 禁用圖片優化 (靜態導出不支持)
+  // 圖片優化配置
   images: {
     unoptimized: true
   },

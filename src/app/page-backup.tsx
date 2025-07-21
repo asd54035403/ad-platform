@@ -10,13 +10,7 @@ export default function Home() {
     if (typeof window !== 'undefined') {
       // Dynamically import to avoid SSR issues
       import("../lib/localStorage").then(({ initializeMockData }) => {
-        try {
-          initializeMockData();
-        } catch (error) {
-          console.error('Failed to initialize mock data:', error);
-        }
-      }).catch((error) => {
-        console.error('Failed to load localStorage module:', error);
+        initializeMockData();
       });
     }
   }, []);

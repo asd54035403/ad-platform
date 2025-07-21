@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './my-listings.module.scss';
+import { getCurrentUser, getListingsByOwner, updateListing, deleteListing, initializeMockData } from '../../lib/localStorage';
 
 interface User {
   id: number;
@@ -14,14 +15,14 @@ interface User {
 }
 
 interface Listing {
-  id: number;
+  id: string;
   title: string;
   type: string;
   description: string;
   price: number;
   categories: string;
-  location: string;
-  image_url: string;
+  location?: string;
+  image_url?: string;
   is_active: boolean;
   created_at: string;
 }
@@ -32,16 +33,16 @@ export default function MyListings() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
+    initializeMockData();
     
-    if (!token || !userData) {
+    const currentUser = getCurrentUser();
+    
+    if (!currentUser) {
       router.push('/login');
       return;
     }
     
-    const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== 'publisher') {
+    if (currentUser.role !== 'publisher') {
       router.push('/dashboard');
       return;
     }
@@ -49,18 +50,12 @@ export default function MyListings() {
     fetchMyListings();
   }, [router]);
 
-  const fetchMyListings = async () => {
+  const fetchMyListings = () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/listings?owner=me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      
-      if (data.success) {
-        setListings(data.data);
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        const userListings = getListingsByOwner(currentUser.id);
+        setListings(userListings);
       }
     } catch (error) {
       console.error('Error fetching listings:', error);
@@ -69,20 +64,10 @@ export default function MyListings() {
     }
   };
 
-  const toggleListingStatus = async (id: number, currentStatus: boolean) => {
+  const toggleListingStatus = (id: string, currentStatus: boolean) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/listings/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ is_active: !currentStatus })
-      });
-      
-      const data = await response.json();
-      if (data.success) {
+      const updatedListing = updateListing(id, { is_active: !currentStatus });
+      if (updatedListing) {
         setListings(prev => prev.map(listing => 
           listing.id === id 
             ? { ...listing, is_active: !currentStatus }
@@ -94,22 +79,14 @@ export default function MyListings() {
     }
   };
 
-  const deleteListing = async (id: number) => {
+  const handleDeleteListing = (id: string) => {
     if (!confirm('確定要刪除這個廣告位嗎？')) {
       return;
     }
     
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`/api/listings/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      const data = await response.json();
-      if (data.success) {
+      const success = deleteListing(id);
+      if (success) {
         setListings(prev => prev.filter(listing => listing.id !== id));
       }
     } catch (error) {
@@ -217,7 +194,7 @@ export default function MyListings() {
                         {listing.is_active ? '暫停' : '啟用'}
                       </button>
                       <button 
-                        onClick={() => deleteListing(listing.id)}
+                        onClick={() => handleDeleteListing(listing.id)}
                         className={styles.deleteButton}
                       >
                         刪除

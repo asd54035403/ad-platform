@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from './login.module.scss';
+import { getUserByEmail, createUser, saveAuthToken, saveCurrentUser, initializeMockData } from '../../lib/localStorage';
 
 export default function Login() {
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
@@ -15,39 +18,46 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const body = isLogin 
-        ? { email: formData.email, password: formData.password }
-        : formData;
+      // 確保數據已初始化
+      initializeMockData();
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        localStorage.setItem('token', data.data.token);
-        localStorage.setItem('user', JSON.stringify({
-          id: data.data.id,
-          email: data.data.email,
-          name: data.data.name,
-          role: data.data.role
-        }));
-        window.location.href = '/dashboard';
+      if (isLogin) {
+        // 登入邏輯
+        const user = getUserByEmail(formData.email);
+        if (user) {
+          // 簡化版本：不驗證密碼，直接登入
+          const token = 'mock-token-' + Date.now();
+          saveAuthToken(token);
+          saveCurrentUser(user);
+          router.push('/dashboard');
+        } else {
+          setMessage('用戶不存在');
+        }
       } else {
-        setMessage(data.message);
+        // 註冊邏輯
+        const existingUser = getUserByEmail(formData.email);
+        if (existingUser) {
+          setMessage('該電子郵件已被使用');
+        } else {
+          const newUser = createUser({
+            email: formData.email,
+            name: formData.name,
+            role: formData.role
+          });
+          const token = 'mock-token-' + Date.now();
+          saveAuthToken(token);
+          saveCurrentUser(newUser);
+          router.push('/dashboard');
+        }
       }
     } catch (error) {
-      setMessage('網路錯誤，請稍後再試');
+      setMessage('操作失敗，請稍後再試');
     } finally {
       setLoading(false);
     }

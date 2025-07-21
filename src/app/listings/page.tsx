@@ -2,18 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './listings.module.scss';
+import { getListings, initializeMockData } from '../../lib/localStorage';
 
 interface Listing {
-  id: number;
+  id: string;
   title: string;
   type: string;
   description: string;
   price: number;
   categories: string;
-  location: string;
-  image_url: string;
-  owner_name: string;
+  location?: string;
+  image_url?: string;
+  owner_name?: string;
   created_at: string;
 }
 
@@ -27,14 +29,14 @@ export default function Listings() {
     fetchListings();
   }, []);
 
-  const fetchListings = async () => {
+  const fetchListings = () => {
     try {
-      const response = await fetch('/api/listings');
-      const data = await response.json();
+      // 確保數據已初始化
+      initializeMockData();
       
-      if (data.success) {
-        setListings(data.data);
-      }
+      // 從localStorage獲取listings
+      const listingsData = getListings();
+      setListings(listingsData);
     } catch (error) {
       console.error('Error fetching listings:', error);
     } finally {
@@ -105,7 +107,13 @@ export default function Listings() {
               <div key={listing.id} className={styles.listingCard}>
                 <div className={styles.cardImage}>
                   {listing.image_url ? (
-                    <img src={listing.image_url} alt={listing.title} />
+                    <Image 
+                      src={listing.image_url} 
+                      alt={listing.title}
+                      width={300}
+                      height={150}
+                      className={styles.cardImageImg}
+                    />
                   ) : (
                     <div className={styles.placeholderImage}>
                       <span>{listing.type}</span>

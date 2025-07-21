@@ -3,29 +3,40 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './listing-detail.module.scss';
+import { getListingById, getCurrentUser } from '../../../lib/localStorage';
+import { mockListings } from '../../../lib/mockData';
+
+// 為靜態導出生成所有可能的參數
+export async function generateStaticParams() {
+  // 返回所有mock listings的id
+  return mockListings.map((listing) => ({
+    id: listing.id,
+  }));
+}
 
 interface User {
-  id: number;
+  id: string;
   email: string;
   name: string;
   role: 'advertiser' | 'publisher';
 }
 
 interface Listing {
-  id: number;
+  id: string;
   title: string;
   type: string;
   description: string;
-  platform_url: string;
+  platform_url?: string;
   price: number;
   categories: string;
   tags: string;
-  location: string;
-  image_url: string;
-  owner_id: number;
-  owner_name: string;
-  owner_email: string;
+  location?: string;
+  image_url?: string;
+  owner_id: string;
+  owner_name?: string;
+  owner_email?: string;
   is_active: boolean;
   created_at: string;
 }
@@ -45,23 +56,25 @@ export default function ListingDetail() {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      setUser(JSON.parse(userData));
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      setUser(currentUser);
     }
     
     fetchListingDetail();
   }, [params.id]);
 
-  const fetchListingDetail = async () => {
+  const fetchListingDetail = () => {
     try {
-      const response = await fetch(`/api/listings/${params.id}`);
-      const data = await response.json();
+      if (typeof params.id !== 'string') {
+        router.push('/listings');
+        return;
+      }
       
-      if (data.success) {
-        setListing(data.data);
+      const listingData = getListingById(params.id);
+      
+      if (listingData) {
+        setListing(listingData);
       } else {
         router.push('/listings');
       }
@@ -73,34 +86,20 @@ export default function ListingDetail() {
     }
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          listing_id: listing?.id,
-          to_user_id: listing?.owner_id,
-          content: messageData.content
-        })
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        alert('訊息已發送！');
-        setShowMessageForm(false);
-        setMessageData({ content: '' });
-      } else {
-        alert('發送失敗：' + data.message);
+      if (!user || !listing) {
+        alert('請先登入');
+        return;
       }
+
+      // 模擬發送訊息 (在真實應用中這裡會調用 createMessage)
+      alert('訊息已發送！（Demo版本）');
+      setShowMessageForm(false);
+      setMessageData({ content: '' });
     } catch (error) {
       console.error('Error sending message:', error);
       alert('發送失敗，請稍後再試');
@@ -144,7 +143,13 @@ export default function ListingDetail() {
         <div className={styles.content}>
           <div className={styles.imageSection}>
             {listing.image_url ? (
-              <img src={listing.image_url} alt={listing.title} className={styles.mainImage} />
+              <Image 
+                src={listing.image_url} 
+                alt={listing.title} 
+                width={600}
+                height={300}
+                className={styles.mainImage} 
+              />
             ) : (
               <div className={styles.placeholderImage}>
                 <span>{listing.type}</span>

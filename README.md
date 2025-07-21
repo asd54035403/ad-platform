@@ -1,6 +1,6 @@
 # AdMatch - 廣告媒合平台
 
-一個連接廣告主與媒體主的現代化平台，讓廣告投放變得更簡單有效。
+一個連接廣告主與媒體主的現代化前端平台，讓廣告投放變得更簡單有效。
 
 ## 🚀 功能特色
 
@@ -9,27 +9,24 @@
 - **需求發布**: 廣告主可以發布廣告需求，讓媒體主主動接洽
 - **即時訊息**: 內建訊息系統，方便雙方溝通
 - **智能搜尋**: 支援關鍵字、類別、地區等多維度搜尋
-- **數據統計**: 提供詳細的數據分析和統計
+- **本地儲存**: 使用 localStorage 持久化數據
 
 ## 🛠️ 技術棧
 
-- **前端**: Next.js 15, React 19, TypeScript, SCSS
-- **後端**: Next.js API Routes, Node.js
-- **資料庫**: SQLite (開發) / PostgreSQL (生產)
-- **認證**: JWT + bcrypt
-- **部署**: Vercel
+- **框架**: Next.js 15 (靜態導出)
+- **前端**: React 19, TypeScript, SCSS
+- **數據**: Mock數據 + localStorage
+- **部署**: Vercel (零配置)
 
-## 🎯 測試帳號
+## 🎯 預設帳號
 
-### 📱 廣告主帳號
-- Email: `advertiser@test.com`
-- 密碼: `advertiser123`
-- 名稱: 小明科技
+### 📱 廣告主
+- Email: `advertiser@example.com`
+- 名稱: 創新科技公司
 
-### 📺 媒體主帳號
-- Email: `publisher@test.com`
-- 密碼: `publisher123`
-- 名稱: 小華媒體
+### 📺 媒體主
+- Email: `publisher@example.com`
+- 名稱: 小明出版社
 
 ## 🏃‍♂️ 快速開始
 
@@ -43,39 +40,36 @@ npm install
 npm run dev
 ```
 
-3. **初始化資料庫**
-```bash
-# 訪問 http://localhost:3000/api/init
-# 然後訪問 http://localhost:3000/api/seed
-```
-
-4. **開始使用**
+3. **開始使用**
    - 前往 http://localhost:3000
-   - 使用測試帳號登入體驗
+   - 首次訪問會自動初始化mock數據
+   - 使用預設帳號登入體驗
 
 ## 📚 專案結構
 
 ```
 src/
 ├── app/                    # Next.js App Router
-│   ├── api/               # API 路由
 │   ├── components/        # 共用組件
 │   ├── dashboard/         # 儀表板頁面
 │   ├── listings/          # 廣告位相關頁面
 │   ├── messages/          # 訊息中心
 │   └── ...
-├── styles/                # SCSS 樣式
-│   ├── variables.scss     # 全域變數
-│   └── global.scss        # 全域樣式
-└── lib/                   # 工具函數
-    ├── auth.ts            # 認證相關
-    ├── db.ts              # 資料庫連接
-    └── db-adapter.ts      # 資料庫適配器
+├── lib/                   # 工具函數
+│   ├── mockData.ts        # Mock數據定義
+│   └── localStorage.ts    # 本地儲存工具
+└── styles/                # SCSS 樣式
+    ├── variables.scss     # 全域變數
+    └── global.scss        # 全域樣式
 ```
 
-## 🚀 部署到 Vercel
+## 🚀 部署
 
-詳細的部署說明請參考 [DEPLOYMENT.md](./DEPLOYMENT.md)
+項目已配置為靜態導出，可直接部署到 Vercel：
+
+1. Push 代碼到 GitHub
+2. 在 Vercel 導入項目
+3. 零配置自動部署完成
 
 ## 🎨 主要頁面
 
@@ -92,15 +86,19 @@ src/
 # 開發模式
 npm run dev
 
-# 建置專案
+# 建置專案 (靜態導出)
 npm run build
-
-# 啟動生產服務器
-npm start
 
 # 代碼檢查
 npm run lint
 ```
+
+## 💾 數據說明
+
+- 所有數據存儲在瀏覽器 localStorage 中
+- 首次訪問自動初始化示例數據
+- 數據在瀏覽器間不共享 (純前端演示)
+- 清除瀏覽器數據將重置所有內容
 
 ## 🤝 貢獻
 

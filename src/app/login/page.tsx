@@ -56,7 +56,7 @@ export default function Login() {
           router.push('/dashboard');
         }
       }
-    } catch (error) {
+    } catch {
       setMessage('操作失敗，請稍後再試');
     } finally {
       setLoading(false);

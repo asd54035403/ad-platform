@@ -7,13 +7,6 @@ import Image from 'next/image';
 import styles from './my-listings.module.scss';
 import { getCurrentUser, getListingsByOwner, updateListing, deleteListing, initializeMockData } from '../../lib/localStorage';
 
-interface User {
-  id: number;
-  email: string;
-  name: string;
-  role: 'advertiser' | 'publisher';
-}
-
 interface Listing {
   id: string;
   title: string;

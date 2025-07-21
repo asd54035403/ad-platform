@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -49,16 +49,7 @@ export default function ListingDetailClient({ listingId }: Props) {
   const [messageData, setMessageData] = useState<MessageData>({ content: '' });
   const [sending, setSending] = useState(false);
 
-  useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
-    }
-    
-    fetchListingDetail();
-  }, [listingId]);
-
-  const fetchListingDetail = () => {
+  const fetchListingDetail = useCallback(() => {
     try {
       const listingData = getListingById(listingId);
       
@@ -73,7 +64,16 @@ export default function ListingDetailClient({ listingId }: Props) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [listingId, router]);
+
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      setUser(currentUser);
+    }
+    
+    fetchListingDetail();
+  }, [listingId, fetchListingDetail]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
